@@ -19,7 +19,6 @@ package com.yzq.zxinglibrary.decode;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -29,12 +28,11 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.common.Constant;
-
 import java.util.Map;
 
 public final class DecodeHandler extends Handler {
 
-    private static final String TAG = DecodeHandler.class.getSimpleName();
+    public static final String TAG = DecodeHandler.class.getSimpleName();
 
     private final CaptureActivity activity;
     private final MultiFormatReader multiFormatReader;
@@ -53,7 +51,6 @@ public final class DecodeHandler extends Handler {
         }
         switch (message.what) {
             case Constant.DECODE:
-
                 decode((byte[]) message.obj, message.arg1, message.arg2);
                 break;
             case Constant.QUIT:
@@ -83,8 +80,7 @@ public final class DecodeHandler extends Handler {
         data = rotatedData;
 
         PlanarYUVLuminanceSource source = activity.getCameraManager()
-                .buildLuminanceSource(data, width, height);
-
+            .buildLuminanceSource(data, width, height);
 
         if (source != null) {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
@@ -99,14 +95,10 @@ public final class DecodeHandler extends Handler {
             }
         }
 
-
-
         Handler handler = activity.getHandler();
         if (rawResult != null) {
-
             if (handler != null) {
-                Message message = Message.obtain(handler,
-                        Constant.DECODE_SUCCEEDED, rawResult);
+                Message message = Message.obtain(handler, Constant.DECODE_SUCCEEDED, rawResult);
                 message.sendToTarget();
             }
         } else {

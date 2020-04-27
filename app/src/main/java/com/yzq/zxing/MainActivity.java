@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -23,7 +22,6 @@ import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.bean.ZxingConfig;
 import com.yzq.zxinglibrary.common.Constant;
 import com.yzq.zxinglibrary.encode.CodeCreator;
-
 import java.util.List;
 
 
@@ -149,7 +147,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 bitmap = CodeCreator.createQRCode(contentEtString, 400, 400, null);
                 if (bitmap != null) {
-                    contentIv.setImageBitmap(bitmap);
+//                    contentIv.setImageBitmap(bitmap);
+                    PreviewDialog dialog = new PreviewDialog(this, bitmap);
+                    dialog.show();
                 }
 
                 break;
@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bitmap = CodeCreator.createQRCode(contentEtString, 400, 400, logo);
 
                 if (bitmap != null) {
-                    contentIvWithLogo.setImageBitmap(bitmap);
+//                    contentIvWithLogo.setImageBitmap(bitmap);
+                    PreviewDialog dialog = new PreviewDialog(this, bitmap);
+                    dialog.show();
                 }
 
                 break;

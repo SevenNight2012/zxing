@@ -20,7 +20,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.zxing.Result;
 import com.yzq.zxinglibrary.R;
 import com.yzq.zxinglibrary.bean.ZxingConfig;
@@ -30,8 +29,8 @@ import com.yzq.zxinglibrary.decode.DecodeImgCallback;
 import com.yzq.zxinglibrary.decode.DecodeImgThread;
 import com.yzq.zxinglibrary.decode.ImageUtil;
 import com.yzq.zxinglibrary.view.ViewfinderView;
-
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -58,7 +57,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private SurfaceHolder surfaceHolder;
-
+    private TextView mScanResult;
 
     public ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -140,7 +139,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         albumLayout = findViewById(R.id.albumLayout);
         albumLayout.setOnClickListener(this);
         bottomLayout = findViewById(R.id.bottomLayout);
-
+        mScanResult = findViewById(R.id.scan_result);
 
         switchVisibility(bottomLayout, config.isShowbottomLayout());
         switchVisibility(flashLightLayout, config.isShowFlashLight());
@@ -187,7 +186,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             flashLightIv.setImageResource(R.drawable.ic_close);
             flashLightTv.setText(R.string.open_flash);
         }
-
     }
 
     /**
@@ -202,9 +200,8 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         Intent intent = getIntent();
         intent.putExtra(Constant.CODED_CONTENT, rawResult.getText());
         setResult(RESULT_OK, intent);
-        this.finish();
-
-
+//        this.finish();
+        mScanResult.setText(String.valueOf(rawResult.getText()));
     }
 
 

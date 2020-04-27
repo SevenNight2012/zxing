@@ -4,14 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -66,6 +64,7 @@ public class DecodeImgThread extends Thread {
             Log.i("解析结果", rawResult.getText());
 
         } catch (Exception e) {
+            Log.e(DecodeHandler.TAG, "解析异常: " + e.getMessage());
             e.printStackTrace();
             //  Log.i("解析的图片结果","失败");
         }

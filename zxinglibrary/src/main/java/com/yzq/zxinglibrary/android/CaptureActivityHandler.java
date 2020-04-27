@@ -20,10 +20,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-
+import android.text.TextUtils;
+import android.util.Log;
 import com.google.zxing.Result;
 import com.yzq.zxinglibrary.camera.CameraManager;
 import com.yzq.zxinglibrary.common.Constant;
+import com.yzq.zxinglibrary.decode.DecodeHandler;
 import com.yzq.zxinglibrary.decode.DecodeThread;
 import com.yzq.zxinglibrary.view.ViewfinderResultPointCallback;
 
@@ -42,6 +44,8 @@ public final class CaptureActivityHandler extends Handler {
     private final DecodeThread decodeThread;
     private State state;
     private final CameraManager cameraManager;
+
+    private Result mLastResult;
 
     private enum State {
         PREVIEW, SUCCESS, DONE
@@ -63,29 +67,30 @@ public final class CaptureActivityHandler extends Handler {
 
     @Override
     public void handleMessage(Message message) {
+        Log.e(DecodeHandler.TAG, "handleMessage: " + message.what);
         switch (message.what) {
             case Constant.RESTART_PREVIEW:
                 // 重新预览
-
                 restartPreviewAndDecode();
                 break;
             case Constant.DECODE_SUCCEEDED:
                 // 解码成功
-
                 state = State.SUCCESS;
-                activity.handleDecode((Result) message.obj);
-
+                Result result = (Result) message.obj;
+                if (!isSameAsTheLast(result)) {
+                    mLastResult = result;
+                    activity.handleDecode(result);
+                }
+                //成功以后马上再次重新预览
+                Message restartMessage = Message.obtain(this, Constant.RESTART_PREVIEW);
+                sendMessageDelayed(restartMessage, 1000);
                 break;
             case Constant.DECODE_FAILED:
-
                 // 尽可能快的解码，以便可以在解码失败时，开始另一次解码
-
                 state = State.PREVIEW;
-                cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-                        Constant.DECODE);
+                cameraManager.requestPreviewFrame(decodeThread.getHandler(), Constant.DECODE);
                 break;
             case Constant.RETURN_SCAN_RESULT:
-
                 activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
                 activity.finish();
                 break;
@@ -121,12 +126,20 @@ public final class CaptureActivityHandler extends Handler {
     }
 
     public void restartPreviewAndDecode() {
+        Log.e(DecodeHandler.TAG, "restartPreviewAndDecode: " + state);
         if (state == State.SUCCESS) {
             state = State.PREVIEW;
-            cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-                    Constant.DECODE);
+            cameraManager.requestPreviewFrame(decodeThread.getHandler(), Constant.DECODE);
             activity.drawViewfinder();
         }
+    }
+
+    private boolean isSameAsTheLast(Result result) {
+        if (null != mLastResult) {
+            String lastText = mLastResult.getText();
+            return !TextUtils.isEmpty(lastText) && lastText.equals(result.getText());
+        }
+        return false;
     }
 
 }

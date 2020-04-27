@@ -70,8 +70,8 @@
 
     <ImageView
         android:id="@+id/contentIv"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_gravity="center" />
 
 
